@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live T-Shirt Overlay</title>
+    <!-- Bootstrap CSS link -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="background-color: #f4f4f4; color: #333;">
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Live T-Shirt Overlay</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form id="webcam-form" method="post" enctype="multipart/form-data" action="/start_webcam" target="video_frame" class="border p-4 rounded shadow-sm">
+                    <div class="form-group">
+                        <label for="tshirt">Upload T-Shirt Image (PNG only):</label>
+                        <input type="file" name="tshirt" id="tshirt" accept="image/png" required class="form-control-file">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Start Webcam</button>
+                </form>
+
+                <div class="mt-4">
+                    <button onclick="stopWebcam()" class="btn btn-danger btn-block">Stop Webcam</button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-center mt-5">Live Feed:</h2>
+        <iframe id="video_frame" name="video_frame" class="w-100" style="max-width: 1500px; height: 700px; border: 1px solid #333; border-radius: 10px;"></iframe>
+    </div>
+
+    <script>
+        function stopWebcam() {
+            fetch('/stop_webcam', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.status);
+                    document.getElementById('video_frame').src = 'about:blank';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+    <!-- Bootstrap JS and Popper.js (optional, for any Bootstrap features like dropdowns) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

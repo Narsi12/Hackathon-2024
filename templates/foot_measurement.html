@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foot Measurement</title>
+    <!-- Bootstrap CSS link -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Upload Foot Image</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form id="uploadForm" enctype="multipart/form-data" class="border p-4 rounded shadow-sm">
+                    <div class="form-group">
+                        <label for="file" class="form-label">Select Foot Image</label>
+                        <input type="file" name="file" accept="image/*" required class="form-control-file">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Upload and Measure</button>
+                </form>
+                <div id="result" class="mt-3 text-center"></div>
+                <img id="annotatedImage" class="img-fluid mt-3" style="display:none;" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const response = await fetch('/calculate-foot-length', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const footLength = response.headers.get('X-Foot-Length-Inches');
+                const blob = await response.blob();
+
+                document.getElementById('result').innerText = `Foot Length: ${footLength} inches`;
+                const imageElement = document.getElementById('annotatedImage');
+                imageElement.src = URL.createObjectURL(blob);
+                imageElement.style.display = 'block';
+            } else {
+                const error = await response.json();
+                alert(error.error);
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS and Popper.js (optional, for any Bootstrap features like dropdowns) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
